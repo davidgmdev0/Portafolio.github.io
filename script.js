@@ -580,7 +580,7 @@ window.addEventListener('load', animateOnScroll);
 
 // Inicializar EmailJS
 (function() {
-  emailjs.init("TU_PUBLIC_KEY"); // 👈 reemplaza con tu Public Key
+  emailjs.init("d1pDcdyxqMnYcw2p0"); // 👈 reemplaza con tu Public Key
 })();
 
 // Contact Form
