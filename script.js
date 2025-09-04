@@ -580,10 +580,9 @@ window.addEventListener('load', animateOnScroll);
 
 // Inicializar EmailJS
 (function() {
-  emailjs.init("d1pDcdyxqMnYcw2p0"); // 👈 reemplaza con tu Public Key
+  emailjs.init("d1pDcdyxqMnYcw2p0"); // 👈 tu Public Key
 })();
 
-// Contact Form
 const form = document.getElementById("contact-form");
 const statusMsg = document.getElementById("form-status");
 
@@ -591,7 +590,7 @@ if (form) {
   form.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    emailjs.sendForm("TU_SERVICE_ID", "TU_TEMPLATE_ID", this)
+    emailjs.sendForm("service_rblkbse", "template_7rzysiu", this)
       .then(() => {
         statusMsg.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarme!";
         statusMsg.className = "text-green-600 text-center text-sm mt-4";
@@ -605,22 +604,4 @@ if (form) {
       });
   });
 }
-
-// Back to Top Button
-const backToTopBtn = document.getElementById("back-to-top");
-
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.classList.remove("opacity-0", "invisible");
-  } else {
-    backToTopBtn.classList.add("opacity-0", "invisible");
-  }
-});
-
-if (backToTopBtn) {
-  backToTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
 
