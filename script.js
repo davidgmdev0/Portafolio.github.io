@@ -149,7 +149,32 @@ if (contactForm) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailInput.value.trim() || !emailRegex.test(emailInput.value)) {
             showError(emailInput, 'Por favor, ingresa un email válido');
-            isValid = false;
+            isVal// Inicializar EmailJS
+(function() {
+  emailjs.init("d1pDcdyxqMnYcw2p0"); // 👈 tu Public Key
+})();
+
+const form = document.getElementById("contact-form");
+const statusMsg = document.getElementById("form-status");
+
+if (form) {
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    emailjs.sendForm("service_rblkbse", "template_7rzysiu", this)
+      .then(() => {
+        statusMsg.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarme!";
+        statusMsg.className = "text-green-600 text-center text-sm mt-4";
+        statusMsg.classList.remove("hidden");
+        form.reset();
+      }, (error) => {
+        statusMsg.textContent = "❌ Error al enviar el mensaje. Intenta de nuevo.";
+        statusMsg.className = "text-red-600 text-center text-sm mt-4";
+        statusMsg.classList.remove("hidden");
+        console.error("EmailJS Error:", error);
+      });
+  });
+}id = false;
         } else {
             clearError(emailInput);
         }
@@ -576,32 +601,98 @@ window.addEventListener('load', animateOnScroll);
 
 
 // Ejecutar una vez al cargar la página
-window.addEventListener('load', animateOnScroll);
-
-// Inicializar EmailJS
+window.addEventListener('load', ani// Inicializar EmailJS
 (function() {
   emailjs.init("d1pDcdyxqMnYcw2p0"); // 👈 tu Public Key
 })();
 
+// Contact Form
 const form = document.getElementById("contact-form");
 const statusMsg = document.getElementById("form-status");
 
 if (form) {
   form.addEventListener("submit", function(event) {
     event.preventDefault();
+    console.log("📨 Intentando enviar con EmailJS...");
 
     emailjs.sendForm("service_rblkbse", "template_7rzysiu", this)
       .then(() => {
+        console.log("✅ Email enviado correctamente");
         statusMsg.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarme!";
         statusMsg.className = "text-green-600 text-center text-sm mt-4";
         statusMsg.classList.remove("hidden");
         form.reset();
       }, (error) => {
+        console.error("❌ Error en EmailJS:", error);
         statusMsg.textContent = "❌ Error al enviar el mensaje. Intenta de nuevo.";
         statusMsg.className = "text-red-600 text-center text-sm mt-4";
         statusMsg.classList.remove("hidden");
-        console.error("EmailJS Error:", error);
       });
+  });
+}
+
+// Back to Top Button
+const backToTopBtn = document.getElementById("back-to-top");
+
+if (backToTopBtn) {
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.remove("opacity-0", "invisible");
+    } else {
+      backToTopBtn.classList.add("opacity-0", "invisible");
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+mateOnScroll);
+
+// Inicializar EmailJS
+(function() {
+  emailjs.init("d1pDcdyxqMnYcw2p0"); // 👈 tu Public Key
+})();
+
+// Contact Form
+const form = document.getElementById("contact-form");
+const statusMsg = document.getElementById("form-status");
+
+if (form) {
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    console.log("📨 Intentando enviar con EmailJS...");
+
+    emailjs.sendForm("service_rblkbse", "template_7rzysiu", this)
+      .then(() => {
+        console.log("✅ Email enviado correctamente");
+        statusMsg.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarme!";
+        statusMsg.className = "text-green-600 text-center text-sm mt-4";
+        statusMsg.classList.remove("hidden");
+        form.reset();
+      }, (error) => {
+        console.error("❌ Error en EmailJS:", error);
+        statusMsg.textContent = "❌ Error al enviar el mensaje. Intenta de nuevo.";
+        statusMsg.className = "text-red-600 text-center text-sm mt-4";
+        statusMsg.classList.remove("hidden");
+      });
+  });
+}
+
+// Back to Top Button
+const backToTopBtn = document.getElementById("back-to-top");
+
+if (backToTopBtn) {
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.remove("opacity-0", "invisible");
+    } else {
+      backToTopBtn.classList.add("opacity-0", "invisible");
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
