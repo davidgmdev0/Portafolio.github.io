@@ -522,3 +522,88 @@ a:focus, button:focus {
 window.addEventListener('scroll', animateOnScroll);
 // Ejecutar una vez al cargar la página
 window.addEventListener('load', animateOnScroll);
+
+
+
+// Inicializar EmailJS con tu Public Key
+(function() {
+    emailjs.init("d1pDcdyxqMnYcw2p0"); 
+})();
+
+// Formulario de Contacto
+const form = document.getElementById("contact-form");
+const statusMsg = document.getElementById("form-status");
+
+if (form) {
+    form.addEventListener("submit", function(event) {
+        event.preventDefault(); // Evita el envío predeterminado del formulario y la recarga de la página
+        console.log("📨 Intentando enviar con EmailJS...");
+
+        // Usar los IDs de servicio y plantilla para enviar el formulario
+        emailjs.sendForm("service_rblkbse", "template_w9i6wkp", this)
+            .then(() => {
+                console.log("✅ Email enviado correctamente");
+                statusMsg.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarme!";
+                statusMsg.className = "text-green-600 text-center text-sm mt-4";
+                statusMsg.classList.remove("hidden");
+                form.reset(); // Restablece los campos del formulario
+            }, (error) => {
+                console.error("❌ Error en EmailJS:", error);
+                statusMsg.textContent = "❌ Error al enviar el mensaje. Intenta de nuevo.";
+                statusMsg.className = "text-red-600 text-center text-sm mt-4";
+                statusMsg.classList.remove("hidden");
+            });
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
