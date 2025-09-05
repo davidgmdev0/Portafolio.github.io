@@ -1,12 +1,253 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+// Mobile menu toggle
+const mobileMenuButton = document.getElementById('mobile-menu-button');
+const mobileMenu = document.getElementById('mobile-menu');
+
+mobileMenuButton.addEventListener('click', function() {
+    mobileMenu.classList.toggle('active');
+    mobileMenuButton.classList.toggle('active');
+    
+    // Añadir animación suave
+    if (mobileMenu.classList.contains('active')) {
+        mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+    } else {
+        mobileMenu.style.maxHeight = '0';
+    }
+});
+
+// Close mobile menu when clicking on links
+document.querySelectorAll('#mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        mobileMenuButton.classList.remove('active');
+        mobileMenu.style.maxHeight = '0';
+    });
+});
+
+// Back to top button
+const backToTopButton = document.getElementById('back-to-top');
+
+window.addEventListener('scroll', function() {
+    if (window.pageYOffset > 300) {
+        backToTopButton.classList.remove('opacity-0', 'invisible');
+        backToTopButton.classList.add('opacity-100', 'visible');
+    } else {
+        backToTopButton.classList.remove('opacity-100', 'visible');
+        backToTopButton.classList.add('opacity-0', 'invisible');
+    }
+});
+
+backToTopButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    
+    // Añadir efecto de pulso al hacer clic
+    backToTopButton.classList.add('animate-pulse');
+    setTimeout(() => {
+        backToTopButton.classList.remove('animate-pulse');
+    }, 500);
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+            // Añadir offset para el header fijo
+            const offsetTop = targetElement.offsetTop - 80;
+            
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Nav link active state
+window.addEventListener('scroll', function() {
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    let currentSection = '';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        
+        if (pageYOffset >= sectionTop - 200) {
+            currentSection = section.getAttribute('id');
+        }
+    });
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSection}`) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Animate progress bars when they come into view
+function animateProgressBars() {
+    const progressBars = document.querySelectorAll('.progress-value');
+    
+    progressBars.forEach(bar => {
+        const barPosition = bar.getBoundingClientRect().top;
+        const screenPosition = window.innerHeight / 1.3;
+        
+        if (barPosition < screenPosition) {
+            // Asegurar que la animación solo ocurra una vez
+            if (!bar.classList.contains('animated')) {
+                bar.style.width = bar.style.width;
+                bar.classList.add('animated');
+                
+                // Añadir efecto de animación
+                bar.style.transition = 'width 1.5s cubic-bezier(0.22, 0.61, 0.36, 1)';
+            }
+        }
+    });
+}
+
+window.addEventListener('scroll', animateProgressBars);
+// Initial call to check elements on page load
+window.addEventListener('load', animateProgressBars);
+
+// Form submission handling
+const contactForm = document.querySelector('.contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Simple form validation
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('message');
+        
+        let isValid = true;
+        
+        // Validar nombre
+        if (!nameInput.value.trim()) {
+            showError(nameInput, 'Por favor, ingresa tu nombre');
+            isValid = false;
+        } else {
+            clearError(nameInput);
+        }
+        
+        // Validar email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailInput.value.trim() || !emailRegex.test(emailInput.value)) {
+            showError(emailInput, 'Por favor, ingresa un email válido');
+            isValid = false;
+        } else {
+            clearError(emailInput);
+        }
+        
+        // Validar mensaje
+        if (!messageInput.value.trim()) {
+            showError(messageInput, 'Por favor, ingresa tu mensaje');
+            isValid = false;
+        } else {
+            clearError(messageInput);
+        }
+        
+        if (!isValid) return;
+        
+        // Simular envío del formulario
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        submitBtn.disabled = true;
+        
+        // Aquí normalmente enviarías los datos a un servidor
+        setTimeout(() => {
+            // Mostrar mensaje de éxito
+            showNotification('¡Mensaje enviado con éxito! Te contactaré pronto.', 'success');
+            
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
+            // Resetear formulario
+            contactForm.reset();
+        }, 2000);
+    });
+}
+
+// Funciones auxiliares para el formulario
+function showError(input, message) {
+    clearError(input);
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'text-red-500 text-xs mt-1';
+    errorDiv.textContent = message;
+    
+    input.parentNode.appendChild(errorDiv);
+    input.classList.add('border-red-500');
+}
+
+function clearError(input) {
+    const errorDiv = input.parentNode.querySelector('.text-red-500');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+    input.classList.remove('border-red-500');
+}
+
+function showNotification(message, type = 'success') {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    notification.style.transform = 'translateX(100%)';
+    
+    document.body.appendChild(notification);
+    
+    // Animar entrada
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Animar salida después de 5 segundos
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 5000);
+}
+
+// Efectos de aparición para elementos al hacer scroll
+function animateOnScroll() {
+    const elements = document.querySelectorAll('.card, .section-title, .skill-card');
+    
+    elements.forEach(element => {
+        const elementPosition = element.getBoundingClientRect().top;
+        const screenPosition = window.innerHeight / 1.2;
+        
+        if (elementPosition < screenPosition) {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }
+    });
+}
+
+// Inicializar opacidad y transformación para animación
+document.querySelectorAll('.card, .section-title, .skill-card').forEach(element => {
+    element.style.opacity = '0';
+    element.style.tr@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #040272d0;
-    --primary-dark: #1e40af;
+    --primary: #0f2b46;
     --secondary: #7c3aed;
-    --secondary-dark: #6d28d9;
-    --accent: #1665dd;
-    --accent-dark: #ea580c;
+    --accent: #f97316;
     --light: #f9fafb;
     --dark: #0f1724;
     --dark-lighter: #1e293b;
@@ -33,26 +274,8 @@ body {
     line-height: 1.6;
 }
 
-/* Utility classes for colors */
-.text-custom-dark { color: var(--dark); }
-.text-custom-dark-lighter { color: var(--dark-lighter); }
-.text-custom-muted { color: var(--muted); }
-.text-custom-muted-light { color: var(--muted-light); }
-.text-custom-light { color: var(--light); }
-
-.bg-custom-light { background-color: var(--light); }
-.bg-custom-dark { background-color: var(--dark); }
-.bg-custom-dark-lighter { background-color: var(--dark-lighter); }
-.bg-custom-card { background-color: var(--card); }
-.bg-custom-primary { background-color: var(--primary); }
-.bg-custom-secondary { background-color: var(--secondary); }
-.bg-custom-accent { background-color: var(--accent); }
-
-.border-custom-primary { border-color: var(--primary); }
-.border-custom-muted { border-color: var(--muted-light); }
-
 .gradient-bg {
-    background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+    background: linear-gradient(135deg, var(--primary) 85%, var(--secondary) 0%);
 }
 
 .gradient-text {
@@ -88,6 +311,7 @@ body {
 .nav-link {
     position: relative;
     transition: color 0.3s ease;
+    color: var(--dark);
 }
 
 .nav-link::after {
@@ -113,7 +337,6 @@ body {
 }
 
 .typewriter {
-    
     overflow: hidden;
     border-right: .15em solid var(--primary);
     white-space: nowrap;
@@ -155,6 +378,7 @@ body {
     transition: var(--transition);
     max-height: 0;
     overflow: hidden;
+    background-color: var(--card);
 }
 
 .mobile-menu.active {
@@ -172,16 +396,16 @@ body {
 .btn-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     transition: var(--transition);
-    box-shadow: 0 4px 6px -1px rgba(29, 12, 102, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
     color: white;
     border: none;
     cursor: pointer;
+    border-radius: var(--border-radius);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(37, 78, 212, 0.4);
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
 }
 
 .btn-outline {
@@ -190,44 +414,21 @@ body {
     transition: var(--transition);
     background: transparent;
     cursor: pointer;
-}
-   
-
-
-
-
-.btn-outline {
-   
-    color: white;              
-    border-radius:none;
-    padding: 10px 20px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-
-.btn-outline {
-    border: none;
-    background-color:#1e40af;
-    color: #ffffff; 
-    transition: all 0.3s ease;
+    border-radius: var(--border-radius);
 }
 
 .btn-outline:hover {
-    background-color: #1665dd;
-    color: #f7f2f2; 
+    background: var(--primary);
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(56, 56, 48, 0.2);
 }
-
-
-
 
 input, textarea {
     transition: var(--transition);
     border: 1px solid var(--muted-light);
     border-radius: var(--border-radius);
+    padding: 0.75rem;
+    width: 100%;
 }
 
 input:focus, textarea:focus {
@@ -266,6 +467,35 @@ a:focus, button:focus {
     outline-offset: 2px;
 }
 
+/* Estilos para el texto con mejor contraste */
+.text-gray-600 {
+    color: var(--muted);
+}
+
+.text-gray-700 {
+    color: var(--dark-lighter);
+}
+
+.text-gray-800 {
+    color: var(--dark);
+}
+
+.bg-gray-50 {
+    background-color: var(--light);
+}
+
+.bg-white {
+    background-color: var(--card);
+}
+
+.bg-gray-800 {
+    background-color: var(--dark);
+}
+
+.text-blue-100 {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 /* Mejoras para las tarjetas de habilidades */
 .skill-card {
     border-left: 4px solid transparent;
@@ -277,87 +507,18 @@ a:focus, button:focus {
 }
 
 /* Mejora para el formulario de contacto */
-.contact-form input,
-.contact-form textarea {
-    transition: var(--transition);
-}
-
-.contact-form input:focus,
-.contact-form textarea:focus {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-}
-
 .contact-info-item {
     transition: var(--transition);
     border-radius: var(--border-radius);
-    padding: 0.5rem;
+    padding: 1rem;
 }
 
 .contact-info-item:hover {
     background-color: rgba(249, 250, 251, 0.5);
-    transform: translateX(5px);
-}
+}ansform = 'translateY(20px)';
+    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+});
 
-/* Mejoras para iconos sociales */
-.social-icon {
-    transition: var(--transition);
-}
-
-.social-icon:hover {
-    transform: translateY(-3px) scale(1.1);
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-}
-
-/* Botón back to top mejorado */
-.back-to-top-btn {
-    transition: var(--transition);
-}
-
-.back-to-top-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-}
-
-/* Mejoras de responsive */
-@media (max-width: 768px) {
-    .section-title::after {
-        width: 40%;
-        left: 30%;
-    }
-    
-    .card-hover:hover {
-        transform: none;
-    }
-}
-
-// Inicializar EmailJS con tu Public Key
-(function() {
-    emailjs.init("d1pDcdyxqMnYcw2p0"); 
-})();
-
-// Formulario de Contacto
-const form = document.getElementById("contact-form");
-const statusMsg = document.getElementById("form-status");
-
-if (form) {
-    form.addEventListener("submit", function(event) {
-        event.preventDefault(); // Evita el envío predeterminado del formulario y la recarga de la página
-        console.log("📨 Intentando enviar con EmailJS...");
-
-        // Usar los IDs de servicio y plantilla para enviar el formulario
-        emailjs.sendForm("service_rblkbse", "template_w9i6wkp", this)
-            .then(() => {
-                console.log("✅ Email enviado correctamente");
-                statusMsg.textContent = "✅ Mensaje enviado con éxito. ¡Gracias por contactarme!";
-                statusMsg.className = "text-green-600 text-center text-sm mt-4";
-                statusMsg.classList.remove("hidden");
-                form.reset(); // Restablece los campos del formulario
-            }, (error) => {
-                console.error("❌ Error en EmailJS:", error);
-                statusMsg.textContent = "❌ Error al enviar el mensaje. Intenta de nuevo.";
-                statusMsg.className = "text-red-600 text-center text-sm mt-4";
-                statusMsg.classList.remove("hidden");
-            });
-    });
-}
+window.addEventListener('scroll', animateOnScroll);
+// Ejecutar una vez al cargar la página
+window.addEventListener('load', animateOnScroll);
